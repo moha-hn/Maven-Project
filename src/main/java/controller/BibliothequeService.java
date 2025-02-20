@@ -54,16 +54,27 @@ public class BibliothequeService {
     }
 
     public void emprunterLivre(int livreId, int membreId, LocalDate dateEmprunt, LocalDate dateRetour) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
         Livre livre = dbManager.trouverLivreParId(livreId);
         Membre membre = dbManager.trouverMembreParId(membreId);
-        
-        if (livre != null && membre != null) {
-            Emprunt emprunt = new Emprunt(0, livre, membre, dateEmprunt, dateRetour);
-            dbManager.ajouterEmprunt(emprunt);
-        } else {
-            System.out.println(" Livre ou Membre introuvable !");
+
+        if (livre == null) {
+            System.out.println("Livre introuvable.");
+            return;
         }
-    }
+
+        if (membre == null) {
+            System.out.println("Membre introuvable.");
+            return;
+        }
+
+        Emprunt emprunt = new Emprunt(0, livre, membre, dateEmprunt, dateRetour);
+        dbManager.ajouterEmprunt(emprunt);
+
+        System.out.println("Emprunt enregistré : " + livre.getTitre() + " par " + membre.getNom());
+    }   
+
 
     public List<Emprunt> listerEmprunts() {
         return dbManager.listerEmprunts();
